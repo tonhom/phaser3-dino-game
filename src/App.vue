@@ -1,26 +1,78 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="gameContainer" class="fixed top-0 left-0 w-full h-full">
+
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Phaser from "phaser"
+import { onBeforeUnmount, onMounted, ref } from "vue"
+import MainScene from "./scene/MainScene"
+import PreloadScene from "./scene/PreloadScene"
+import eventBus from "./events/EventBus"
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+
+  },
+  setup: function () {
+    /**@type {import("@vue/reactivity").Ref<Phaser.Game>} */
+    const game = ref()
+    /**@type {Phaser.Types.Core.GameConfig} */
+    var config = {
+      type: Phaser.AUTO,
+      scale: {
+        mode: Phaser.Scale.RESIZE,
+        parent: 'gameContainer',
+        autoCenter: Phaser.Scale.RESIZE,
+        width: window.innerWidth,
+        height: window.innerHeight,
+      },
+      transparent: true,
+      pixelArt: true,
+      physics: {
+        default: 'arcade',
+        arcade: {
+          // gravity: { y: 200 }
+          debug: false
+        }
+      },
+      scene: [PreloadScene, MainScene]
+    }
+
+    const title = ref("Test Integrate Phaser with vue")
+
+    onMounted(() => {
+      game.value = new Phaser.Game(config)
+      eventBus.on("onGameEnd", (seconds) => {
+        if (seconds >= 10) {
+          alert("call api to get point")
+        } else {
+          // alert("Show popup try again")
+          const tryAgain = confirm("Try Again")
+          if(tryAgain){
+            eventBus.emit("restartGame")
+          }
+        }
+      })
+      window.onresize = () => {
+        // game.value.scale.resize('100%', '100%')
+      }
+    })
+
+    onBeforeUnmount(() => {
+      window.onresize = null
+    })
+
+    return {
+      game,
+      title
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+@import "@/main.css";
 </style>
