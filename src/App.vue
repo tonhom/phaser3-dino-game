@@ -17,17 +17,19 @@ export default {
 
   },
   setup: function () {
+    const DEFAULT_HEIGHT = 720
+    const DEFAULT_WIDTH = 1280
     /**@type {import("@vue/reactivity").Ref<Phaser.Game>} */
     const game = ref()
     /**@type {Phaser.Types.Core.GameConfig} */
     var config = {
       type: Phaser.AUTO,
       scale: {
-        mode: Phaser.Scale.RESIZE,
+        mode: Phaser.Scale.FIT,
         parent: 'gameContainer',
-        autoCenter: Phaser.Scale.RESIZE,
-        width: window.innerWidth,
-        height: window.innerHeight,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: DEFAULT_WIDTH,
+        height: DEFAULT_HEIGHT,
       },
       transparent: true,
       pixelArt: true,
@@ -35,7 +37,7 @@ export default {
         default: 'arcade',
         arcade: {
           // gravity: { y: 200 }
-          debug: false
+          debug: true
         }
       },
       scene: [PreloadScene, MainScene]
@@ -73,6 +75,12 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 @import "@/main.css";
+#gameContainer {
+  background-color: gray;
+  canvas{
+    @apply bg-white;
+  }
+}
 </style>

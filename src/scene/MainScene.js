@@ -16,6 +16,7 @@ export default class MainScene extends Phaser.Scene {
 
   //#region dino game
   floorOffset = 100
+  triggerYOffset = 225
   /**@type {Phaser.Physics.Arcade.StaticGroup} */
   platforms = null
   /**@type {Phaser.Physics.Arcade.Group} */
@@ -39,10 +40,9 @@ export default class MainScene extends Phaser.Scene {
     // spaceKey.on('down', () => {
     //   this.thud.play()
     // })
+    // console.log(this.scale.orientation, !this.sys.game.device.os.desktop)
 
-
-    // this.scale.lockOrientation('landscape')
-    this.startTrigger = this.physics.add.sprite(0, this.sys.canvas.height / 2).setOrigin(0, 1).setImmovable(0)
+    this.startTrigger = this.physics.add.sprite(0, this.sys.canvas.height - this.triggerYOffset).setOrigin(0, 1).setImmovable(0)
 
     this.createSound()
     this.drawBg()
@@ -54,7 +54,7 @@ export default class MainScene extends Phaser.Scene {
     this.handleInputs()
     this.initStartTrigger()
     this.initColliders()
-    
+
     // this.drawHelloWorld()
 
     eventBus.on("restartGame", () => {
@@ -132,7 +132,7 @@ export default class MainScene extends Phaser.Scene {
 
   initStartTrigger() {
     this.physics.add.overlap(this.startTrigger, this.dino, () => {
-      if (this.startTrigger.y === this.sys.canvas.height / 2) {
+      if (this.startTrigger.y === this.sys.canvas.height - this.triggerYOffset) {
         this.startTrigger.body.reset(0, this.sys.canvas.height - this.floorOffset)
 
         return
@@ -144,7 +144,7 @@ export default class MainScene extends Phaser.Scene {
       this.dino.play('dino-run', 1)
 
       const startEvent = this.time.addEvent({
-        delay: 250,
+        delay: 500,
         loop: true,
         callbackScope: this,
         callback: () => {
@@ -186,8 +186,8 @@ export default class MainScene extends Phaser.Scene {
       .setOrigin(0, 1)
       .setSize(60, 60)
       .setDepth(1)
-      // .setTint(100, 100)
-      
+    // .setTint(100, 100)
+
     // this.platforms.add(this.dino)
     this.initAnims()
     this.createControl()
@@ -210,7 +210,7 @@ export default class MainScene extends Phaser.Scene {
     if (this.physics.world.isPaused) return
     if (!this.dino.body.onFloor() || this.dino.body.velocity.x > 0) { return; }
     this.dino.setTexture('dino', 0);
-    this.dino.setVelocityY(-1800);
+    this.dino.setVelocityY(-1600);
 
     this.jumpSound.play()
   }
@@ -228,7 +228,7 @@ export default class MainScene extends Phaser.Scene {
     obstacle
       .setOrigin(0, 1)
       .setImmovable()
-      .setSize(obstacle.body.width * .9, obstacle.body.height * .9)
+      .setSize(obstacle.body.width * .9, obstacle.body.height * .8)
 
     // console.log(obstacleNum, distance)
   }
