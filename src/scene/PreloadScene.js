@@ -48,10 +48,41 @@ class PreloadScene extends Phaser.Scene {
     this.load.image('obsticle-4', 'assets/cactuses_big_1.png')
     this.load.image('obsticle-5', 'assets/cactuses_big_2.png')
     this.load.image('obsticle-6', 'assets/cactuses_big_3.png')
+
+    // adjust screen
+    // this.scale.lockOrientation("landscape")
+    // this.adjustGameScreen(false)
   }
 
   create() {
+    // this.game.scale.on('orientationchange', () => {
+    //   this.adjustGameScreen()
+    // })
     this.scene.start('MainScene');
+  }
+
+  adjustGameScreen(isRestart = true) {
+    console.log(this.game.scale.isLandscape)
+    if (this.game.scale.isLandscape) {
+      this.screenCorrect = true
+      this.game.scale.setGameSize(this.game.config.width, this.game.config.height)
+    } else {
+      // console.log("portait mode", this.sys.canvas.height, this.sys.canvas.width)
+      this.screenCorrect = false
+      // console.log("resize")
+      this.game.scale.setGameSize(this.game.config.height, this.game.config.width)
+    }
+    if (isRestart) {
+      this.restartGame()
+    }
+  }
+
+  restartGame() {
+    this.registry.destroy()
+    this.events.off()
+
+    this.scene.restart()
+    this.scale.refresh()
   }
 }
 
