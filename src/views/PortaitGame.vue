@@ -103,6 +103,7 @@ export default defineComponent({
             game.value.config.duration = 30
             game.value.config.gameSpeed = 12
             game.value.config.velocity = 750
+            game.value.config.obstacleCondition = 500
             eventBus.on("onGameEnd", (isGameOver) => {
                 // game over mean not reach 30 sec
                 if (!isGameOver) {

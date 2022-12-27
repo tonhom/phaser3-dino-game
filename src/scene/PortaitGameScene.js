@@ -8,15 +8,15 @@ export default class PortaitGameScene extends Phaser.Scene {
 
     //#region lifecycle
     create() {
-        this.spawnOffset = 100
-        this.physics.world.setBounds(this.spawnOffset, 0, this.sys.canvas.width - (this.spawnOffset * 2), this.sys.canvas.height)
+        this.spawnOffset = 25
+        // this.physics.world.setBounds(this.spawnOffset, 0, this.sys.canvas.width - (this.spawnOffset * 2), this.sys.canvas.height)
 
         this.createVars()
         this.createPlayer()
         this.drawControls()
         this.drawTimer()
         this.handleInputs()
-        // this.initColliders()
+        this.initColliders()
 
         eventBus.on("restartGame", () => {
             this.resetGame()
@@ -35,7 +35,7 @@ export default class PortaitGameScene extends Phaser.Scene {
 
         this.respawnTime += delta * this.gameSpeed * 0.08
         // console.log(this.respawnTime)
-        if (this.respawnTime >= 500) {
+        if (this.respawnTime >= this.obstacleCondition) {
             this.createObstacles(delta)
             this.respawnTime = 0
         }
@@ -67,6 +67,7 @@ export default class PortaitGameScene extends Phaser.Scene {
         this.obstacles = this.physics.add.group()
         this.gameSpeed = this.game.config.gameSpeed ?? 12
         this.velocity = this.game.config.velocity ?? 500
+        this.obstacleCondition = this.game.config.obstacleCondition ?? 400
         this.isGameRunning = false
         this.respawnTime = 0
         this.initialTime = 0
@@ -180,7 +181,7 @@ export default class PortaitGameScene extends Phaser.Scene {
         let obstacleKey = `obsticle-${obstacleNum}`
         let img = this.textures.get(obstacleKey).getSourceImage()
         // console.log(img.source[0].width)
-        const randomX = Phaser.Math.Between(this.spawnOffset, this.game.config.width - img.width - this.spawnOffset)
+        const randomX = Phaser.Math.Between(this.spawnOffset, (this.game.config.width / 2) - img.width)
         const distance = Phaser.Math.Between(100 + addiotnalSpace, 300)
 
         // console.log(distance)
@@ -193,7 +194,21 @@ export default class PortaitGameScene extends Phaser.Scene {
             .setImmovable()
         // .setSize(obstacle.body.width * .8, obstacle.body.height * .8)
 
-        // console.log(obstacleNum, distance)
+        const obstacleNum2 = Math.floor(Math.random() * 6) + 1
+        let obstacleKey2 = `obsticle-${obstacleNum2}`
+        let img2 = this.textures.get(obstacleKey2).getSourceImage()
+        // console.log(img.source[0].width)
+        const randomX2 = Phaser.Math.Between(this.game.config.width / 2, this.game.config.width - img2.width - this.spawnOffset)
+        const distance2 = Phaser.Math.Between(100 + addiotnalSpace, 300)
+
+        // console.log(distance)
+        /**@type {Phaser.GameObjects.Image} */
+        let obstacle2 = this.obstacles.create(randomX2, distance2 * -1, obstacleKey2)
+
+        // obstacle.body.offset.y = +10
+        obstacle2
+            .setOrigin(0, 1)
+            .setImmovable()
     }
 
     resetGame() {
